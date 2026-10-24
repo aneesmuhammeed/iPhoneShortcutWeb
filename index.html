@@ -131,7 +131,7 @@
 
         <a
           id="icloudInstallBtn"
-          href="https://www.icloud.com/shortcuts/cf979e4b4f954400a904c91c27851e3a"
+          href="https://www.icloud.com/shortcuts/4b961690cb304bd7a08312b3d2f17337"
           target="_blank"
           rel="noopener noreferrer"
           class="w-full bg-white dark:bg-[#2C2C2E] hover:bg-neutral-50 dark:hover:bg-[#353538] text-neutral-900 dark:text-white font-semibold text-sm py-3 px-4 rounded-xl border border-neutral-200/80 dark:border-neutral-700 shadow-ios-sm flex items-center justify-between group transition-all"
@@ -267,7 +267,7 @@
               <input
                 type="url"
                 id="icloudUrlInput"
-                value="https://www.icloud.com/shortcuts/cf979e4b4f954400a904c91c27851e3a"
+                value="https://www.icloud.com/shortcuts/4b961690cb304bd7a08312b3d2f17337"
                 placeholder="https://www.icloud.com/shortcuts/your-shortcut-id"
                 oninput="updateICloudLinkFromInput(this.value)"
                 class="w-full bg-[#F2F2F7] dark:bg-[#2C2C2E] text-neutral-900 dark:text-white text-xs rounded-lg px-3 py-2 border border-transparent focus:border-apple-blue transition-all font-mono"
@@ -290,21 +290,20 @@
         </button>
       </form>
 
-      <!-- Result Section (Reveals after generation) -->
-      <div id="resultSection" class="hidden mt-7 pt-6 border-t border-neutral-200/80 dark:border-neutral-800 fade-enter">
+      <!-- Result Section (Always visible with live update) -->
+      <div id="resultSection" class="mt-7 pt-6 border-t border-neutral-200/80 dark:border-neutral-800">
 
         <!-- Status badge -->
-        <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-apple-green mb-3">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          Deep Link Ready
+        <div id="statusBadgeContainer" class="flex items-center justify-center gap-1.5 text-xs font-semibold text-neutral-400 dark:text-neutral-500 mb-3 transition-colors">
+          <span id="statusIndicatorDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="statusBadgeText">Enter credentials above &bull; Ready to generate</span>
         </div>
 
         <!-- Prominent Large Green Button to Trigger Shortcuts -->
         <a
           id="triggerShortcutBtn"
-          href="#"
+          href="javascript:void(0)"
+          onclick="handleTriggerShortcutClick(event)"
           class="block w-full text-center bg-apple-green hover:bg-apple-greenDark text-white font-bold text-lg sm:text-xl py-4 px-6 rounded-2xl shadow-ios-btn active:scale-[0.98] hover:shadow-green-500/30 transition-all cursor-pointer relative overflow-hidden group"
         >
           <div class="flex items-center justify-center gap-3">
@@ -315,7 +314,7 @@
             </svg>
             <span class="tracking-tight">Open in Apple Shortcuts</span>
           </div>
-          <span class="block text-[11px] font-normal text-white/80 mt-0.5">Taps directly into Shortcuts app</span>
+          <span id="triggerSubtitle" class="block text-[11px] font-normal text-white/90 mt-0.5">Tap to generate &amp; trigger shortcut</span>
         </a>
 
         <!-- Secondary Actions (Copy & QR Code) -->
@@ -447,7 +446,7 @@
 
   <!-- JavaScript Logic -->
   <script>
-    const DEFAULT_ICLOUD_LINK = 'https://www.icloud.com/shortcuts/cf979e4b4f954400a904c91c27851e3a';
+    const DEFAULT_ICLOUD_LINK = 'https://www.icloud.com/shortcuts/4b961690cb304bd7a08312b3d2f17337';
     let currentDeepLink = '';
     let qrInstance = null;
     let icloudLink = localStorage.getItem('photo2tegram_icloud_link') || DEFAULT_ICLOUD_LINK;
@@ -499,65 +498,133 @@
       initICloudLink();
     }
 
-    // Call on load
-    document.addEventListener('DOMContentLoaded', initICloudLink);
+    // Initialize on load & attach live listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      initICloudLink();
+      attachLiveListeners();
+      updateLiveLink(false);
+    });
+
+    function attachLiveListeners() {
+      ['botToken', 'chatID', 'shortcutName'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => updateLiveLink(false));
+      });
+    }
 
     /**
-     * Intercept form submission, build JSON, URL-encode, and construct Shortcuts deep link.
+     * Compute deep link live as inputs change or when explicitly generated
+     */
+    function updateLiveLink(showFeedback = false) {
+      const botTokenInput = document.getElementById('botToken');
+      const chatIDInput = document.getElementById('chatID');
+      const shortcutNameInput = document.getElementById('shortcutName');
+
+      const botToken = botTokenInput ? botTokenInput.value.trim() : '';
+      const chatID = chatIDInput ? chatIDInput.value.trim() : '';
+      const shortcutName = (shortcutNameInput && shortcutNameInput.value.trim()) || 'Photo2Tegram';
+
+      const statusBadge = document.getElementById('statusBadgeContainer');
+      const statusDot = document.getElementById('statusIndicatorDot');
+      const statusText = document.getElementById('statusBadgeText');
+      const triggerBtn = document.getElementById('triggerShortcutBtn');
+      const triggerSubtitle = document.getElementById('triggerSubtitle');
+      const rawJsonPreview = document.getElementById('rawJsonPreview');
+      const fullUrlPreview = document.getElementById('fullUrlPreview');
+
+      if (botToken && chatID) {
+        // Build JSON object: {"botToken": "value1", "chatID": "value2"}
+        const payloadObj = { botToken, chatID };
+        const jsonString = JSON.stringify(payloadObj);
+        const urlEncodedJson = encodeURIComponent(jsonString);
+
+        // Construct deep link: shortcuts://run-shortcut?name=Photo2Tegram&input=text&text=[URL_ENCODED_JSON]
+        const deepLink = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}&input=text&text=${urlEncodedJson}`;
+        currentDeepLink = deepLink;
+
+        triggerBtn.href = deepLink;
+        triggerSubtitle.textContent = 'Tap to immediately launch Shortcuts app';
+        
+        statusBadge.className = 'flex items-center justify-center gap-1.5 text-xs font-semibold text-apple-green mb-3 transition-colors';
+        statusDot.className = 'w-2 h-2 rounded-full bg-apple-green';
+        statusText.textContent = 'Deep Link Ready • Ready to launch';
+
+        if (rawJsonPreview) rawJsonPreview.textContent = JSON.stringify(payloadObj, null, 2);
+        if (fullUrlPreview) fullUrlPreview.textContent = deepLink;
+
+        const qrContainer = document.getElementById('qrContainer');
+        if (qrContainer && !qrContainer.classList.contains('hidden')) {
+          renderQrCode(deepLink);
+        }
+
+        if (showFeedback) {
+          triggerBtn.classList.add('ring-4', 'ring-green-400/40');
+          setTimeout(() => triggerBtn.classList.remove('ring-4', 'ring-green-400/40'), 1500);
+          triggerBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          showToast('Shortcuts link ready!');
+        }
+        return true;
+      } else {
+        currentDeepLink = '';
+        triggerBtn.href = 'javascript:void(0)';
+        triggerSubtitle.textContent = 'Tap to validate & trigger shortcut';
+
+        statusBadge.className = 'flex items-center justify-center gap-1.5 text-xs font-semibold text-neutral-400 dark:text-neutral-500 mb-3 transition-colors';
+        statusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        statusText.textContent = 'Enter credentials above • Ready to generate';
+
+        if (rawJsonPreview) rawJsonPreview.textContent = '// Enter Telegram Bot Token and Chat ID above';
+        if (fullUrlPreview) fullUrlPreview.textContent = 'shortcuts://run-shortcut?name=' + encodeURIComponent(shortcutName) + '&input=text&text=...';
+        return false;
+      }
+    }
+
+    /**
+     * Intercept form submission
      */
     function generateShortcutLink(event) {
       if (event) event.preventDefault();
 
       const botTokenInput = document.getElementById('botToken');
       const chatIDInput = document.getElementById('chatID');
-      const shortcutNameInput = document.getElementById('shortcutName');
 
-      const botToken = botTokenInput.value.trim();
-      const chatID = chatIDInput.value.trim();
-      const shortcutName = (shortcutNameInput.value.trim() || 'Photo2Tegram');
-
-      if (!botToken || !chatID) {
-        showToast('Please fill in both Bot Token and Chat ID.');
+      if (!botTokenInput.value.trim()) {
+        showToast('Please enter your Telegram Bot Token');
+        botTokenInput.focus();
+        return;
+      }
+      if (!chatIDInput.value.trim()) {
+        showToast('Please enter your Chat ID');
+        chatIDInput.focus();
         return;
       }
 
-      // 1. Build JSON Object: {"botToken": "value1", "chatID": "value2"}
-      const payloadObj = {
-        botToken: botToken,
-        chatID: chatID
-      };
+      updateLiveLink(true);
+    }
 
-      const jsonString = JSON.stringify(payloadObj);
+    /**
+     * Handle tapping the prominent green button
+     */
+    function handleTriggerShortcutClick(event) {
+      const botTokenInput = document.getElementById('botToken');
+      const chatIDInput = document.getElementById('chatID');
 
-      // 2. URL-encode this JSON string
-      const urlEncodedJson = encodeURIComponent(jsonString);
-
-      // 3. Construct deep link:
-      // shortcuts://run-shortcut?name=Photo2Tegram&input=text&text=[URL_ENCODED_JSON]
-      const deepLink = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}&input=text&text=${urlEncodedJson}`;
-      currentDeepLink = deepLink;
-
-      // 4. Update Prominent Green Button
-      const triggerBtn = document.getElementById('triggerShortcutBtn');
-      triggerBtn.href = deepLink;
-
-      // Update Payload Inspector Details
-      document.getElementById('rawJsonPreview').textContent = JSON.stringify(payloadObj, null, 2);
-      document.getElementById('fullUrlPreview').textContent = deepLink;
-
-      // 5. Reveal Result Section
-      const resultSection = document.getElementById('resultSection');
-      resultSection.classList.remove('hidden');
-
-      // Re-render QR code if it was visible
-      const qrContainer = document.getElementById('qrContainer');
-      if (!qrContainer.classList.contains('hidden')) {
-        renderQrCode(deepLink);
+      const isReady = updateLiveLink(false);
+      if (!isReady) {
+        event.preventDefault();
+        if (!botTokenInput.value.trim()) {
+          showToast('Please fill in your Telegram Bot Token above');
+          botTokenInput.focus();
+          botTokenInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (!chatIDInput.value.trim()) {
+          showToast('Please fill in your Chat ID above');
+          chatIDInput.focus();
+          chatIDInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } else {
+        // Valid link is ready, navigation continues naturally via href
+        showToast('Opening Apple Shortcuts...');
       }
-
-      // Smooth scroll to green button on mobile
-      triggerBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      showToast('Shortcuts link generated!');
     }
 
     /**

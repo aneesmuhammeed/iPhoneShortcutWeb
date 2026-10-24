@@ -6,7 +6,7 @@ A clean, mobile-friendly iOS-styled web application built with Tailwind CSS that
 
 ## 🔗 Official Shortcut Link
 
-- **iCloud Shortcut**: [https://www.icloud.com/shortcuts/cf979e4b4f954400a904c91c27851e3a](https://www.icloud.com/shortcuts/cf979e4b4f954400a904c91c27851e3a)
+- **iCloud Shortcut**: [https://www.icloud.com/shortcuts/4b961690cb304bd7a08312b3d2f17337](https://www.icloud.com/shortcuts/4b961690cb304bd7a08312b3d2f17337)
 
 ---
 
