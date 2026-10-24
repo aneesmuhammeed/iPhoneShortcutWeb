@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Photo2Tegram &bull; Shortcuts Link Generator</title>
+  <meta name="description" content="Generate an Apple Shortcuts deep link to configure Telegram Bot Token and Chat ID for Photo2Tegram.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QRCode.js for seamless desktop-to-iPhone scanning -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          colors: {
+            apple: {
+              blue: '#007AFF',
+              blueDark: '#0062cc',
+              green: '#34C759',
+              greenDark: '#28A745',
+              grayBgLight: '#F2F2F7',
+              grayBgDark: '#000000',
+              cardLight: '#FFFFFF',
+              cardDark: '#1C1C1E',
+              subtextLight: '#8E8E93',
+              subtextDark: '#98989D',
+              borderLight: '#E5E5EA',
+              borderDark: '#2C2C2E',
+            }
+          },
+          fontFamily: {
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Display"',
+              '"SF Pro Text"',
+              '"Segoe UI"',
+              'Roboto',
+              'Helvetica',
+              'Arial',
+              'sans-serif'
+            ]
+          },
+          boxShadow: {
+            'ios-sm': '0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)',
+            'ios-card': '0 8px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04)',
+            'ios-btn': '0 4px 14px rgba(52, 199, 89, 0.35)',
+            'ios-blue-btn': '0 4px 14px rgba(0, 122, 255, 0.35)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* iOS Momentum Scrolling & Form Resets */
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input:focus {
+      outline: none;
+    }
+    /* Smooth accordion & card transitions */
+    .fade-enter {
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-[#F2F2F7] dark:bg-black text-[#1C1C1E] dark:text-[#F2F2F7] min-h-screen flex flex-col justify-between selection:bg-apple-blue selection:text-white transition-colors duration-200">
+
+  <!-- Main Container -->
+  <main class="w-full max-w-lg mx-auto px-4 py-8 sm:py-12 flex-1 flex flex-col justify-center">
+
+    <!-- Header / Brand Section -->
+    <header class="text-center mb-8">
+      <!-- Apple Shortcuts Icon Badge -->
+      <div class="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-tr from-[#FF2D55] via-[#AF52DE] to-[#5856D6] shadow-lg shadow-purple-500/20 mb-4 transform hover:scale-105 transition-transform">
+        <svg class="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Shortcuts Double Diamond Geometry -->
+          <rect x="3" y="3" width="11" height="11" rx="3" transform="rotate(45 8.5 8.5)" fill="currentColor" fill-opacity="0.3"/>
+          <rect x="9.5" y="9.5" width="11" height="11" rx="3" transform="rotate(45 15 15)" fill="currentColor" fill-opacity="0.9"/>
+        </svg>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+        Shortcut Configurator
+      </h1>
+      <p class="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs sm:max-w-sm mx-auto">
+        Generate an instant Apple Shortcuts deep link for <span class="font-semibold text-neutral-700 dark:text-neutral-200">Photo2Tegram</span>
+      </p>
+    </header>
+
+    <!-- Main Card -->
+    <div class="bg-white dark:bg-[#1C1C1E] rounded-3xl p-6 sm:p-7 shadow-ios-card border border-neutral-200/70 dark:border-neutral-800 transition-all">
+
+      <!-- Step 1: Install Shortcut via iCloud Link -->
+      <div class="mb-6 p-4 rounded-2xl bg-gradient-to-br from-blue-500/8 via-purple-500/8 to-pink-500/8 border border-neutral-200/80 dark:border-neutral-800">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-apple-blue flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded-full bg-apple-blue text-white flex items-center justify-center text-[10px] font-bold">1</span>
+            Step 1: Install Shortcut
+          </span>
+          <button
+            type="button"
+            onclick="promptICloudLink()"
+            class="text-[11px] font-medium text-neutral-500 hover:text-apple-blue dark:text-neutral-400 dark:hover:text-apple-blue transition-colors flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            Edit iCloud Link
+          </button>
+        </div>
+
+        <a
+          id="icloudInstallBtn"
+          href="https://www.icloud.com/shortcuts/ba4e28287e13441790dc2105131cfafb"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full bg-white dark:bg-[#2C2C2E] hover:bg-neutral-50 dark:hover:bg-[#353538] text-neutral-900 dark:text-white font-semibold text-sm py-3 px-4 rounded-xl border border-neutral-200/80 dark:border-neutral-700 shadow-ios-sm flex items-center justify-between group transition-all"
+        >
+          <div class="flex items-center gap-2.5">
+            <!-- Apple iCloud / Shortcuts glyph -->
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#FF2D55] to-[#5856D6] flex items-center justify-center text-white shadow-sm flex-shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="11" height="11" rx="3" transform="rotate(45 8.5 8.5)" fill="currentColor" fill-opacity="0.3"/>
+                <rect x="9.5" y="9.5" width="11" height="11" rx="3" transform="rotate(45 15 15)" fill="currentColor" fill-opacity="0.9"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <span class="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white leading-tight">
+                Get "Photo2Tegram" Shortcut
+              </span>
+              <span id="icloudStatusSubtitle" class="block text-[11px] font-normal text-apple-green dark:text-[#30D158]">
+                Tap to install on iPhone &bull; Ready
+              </span>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-apple-blue group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-1.5 mb-4 text-[11px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+        <span class="w-4 h-4 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center text-[10px] font-bold">2</span>
+        Step 2: Configure Your Credentials
+      </div>
+
+      <!-- Form -->
+      <form id="shortcutForm" class="space-y-5" onsubmit="generateShortcutLink(event)">
+
+        <!-- Telegram Bot Token Input -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="botToken" class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-apple-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Telegram Bot Token
+            </label>
+            <span class="text-[11px] text-neutral-400 dark:text-neutral-500">From @BotFather</span>
+          </div>
+
+          <div class="relative">
+            <input
+              type="text"
+              id="botToken"
+              name="botToken"
+              required
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="e.g. 123456789:ABCdefGhIJKlmNoPQRstuVWXyz"
+              class="w-full bg-[#F2F2F7] dark:bg-[#2C2C2E] text-neutral-900 dark:text-white text-sm sm:text-base rounded-xl px-4 py-3.5 border border-transparent focus:border-apple-blue dark:focus:border-apple-blue focus:bg-white dark:focus:bg-[#2C2C2E] transition-all font-mono placeholder:font-sans placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+            />
+            <button
+              type="button"
+              id="pasteTokenBtn"
+              onclick="pasteToInput('botToken')"
+              title="Paste from clipboard"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium text-apple-blue hover:bg-apple-blue/10 rounded-lg transition-colors"
+            >
+              Paste
+            </button>
+          </div>
+        </div>
+
+        <!-- Telegram Chat ID Input -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="chatID" class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-apple-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Chat ID
+            </label>
+            <span class="text-[11px] text-neutral-400 dark:text-neutral-500">e.g. 987654321</span>
+          </div>
+
+          <div class="relative">
+            <input
+              type="text"
+              id="chatID"
+              name="chatID"
+              required
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="e.g. 987654321 or -100123456789"
+              class="w-full bg-[#F2F2F7] dark:bg-[#2C2C2E] text-neutral-900 dark:text-white text-sm sm:text-base rounded-xl px-4 py-3.5 border border-transparent focus:border-apple-blue dark:focus:border-apple-blue focus:bg-white dark:focus:bg-[#2C2C2E] transition-all font-mono placeholder:font-sans placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+            />
+            <button
+              type="button"
+              id="pasteChatBtn"
+              onclick="pasteToInput('chatID')"
+              title="Paste from clipboard"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium text-apple-blue hover:bg-apple-blue/10 rounded-lg transition-colors"
+            >
+              Paste
+            </button>
+          </div>
+        </div>
+
+        <!-- Optional: Shortcut Name override (Defaults to Photo2Tegram) -->
+        <div class="pt-1">
+          <button
+            type="button"
+            onclick="toggleOptions()"
+            class="text-xs text-neutral-500 hover:text-apple-blue dark:text-neutral-400 flex items-center gap-1 transition-colors"
+          >
+            <span id="optionsIcon" class="inline-block transition-transform duration-200">&#9656;</span>
+            <span>Shortcut Options (Target Name)</span>
+          </button>
+          <div id="optionsContainer" class="hidden mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
+            <div>
+              <label for="shortcutName" class="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
+                Target Shortcut Name
+              </label>
+              <input
+                type="text"
+                id="shortcutName"
+                value="Photo2Tegram"
+                class="w-full bg-[#F2F2F7] dark:bg-[#2C2C2E] text-neutral-900 dark:text-white text-xs rounded-lg px-3 py-2 border border-transparent focus:border-apple-blue transition-all"
+              />
+            </div>
+            <div>
+              <label for="icloudUrlInput" class="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
+                iCloud Shortcut Share Link
+              </label>
+              <input
+                type="url"
+                id="icloudUrlInput"
+                value="https://www.icloud.com/shortcuts/ba4e28287e13441790dc2105131cfafb"
+                placeholder="https://www.icloud.com/shortcuts/your-shortcut-id"
+                oninput="updateICloudLinkFromInput(this.value)"
+                class="w-full bg-[#F2F2F7] dark:bg-[#2C2C2E] text-neutral-900 dark:text-white text-xs rounded-lg px-3 py-2 border border-transparent focus:border-apple-blue transition-all font-mono"
+              />
+              <p class="text-[10px] text-neutral-400 mt-1">Paste your shortcut's iCloud link from the Shortcuts app (Share &rarr; Copy iCloud Link).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generate Link Button -->
+        <button
+          type="submit"
+          id="generateBtn"
+          class="w-full bg-apple-blue hover:bg-apple-blueDark text-white font-semibold text-base py-3.5 px-6 rounded-2xl shadow-ios-blue-btn active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
+        >
+          <span>Generate Link</span>
+          <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </form>
+
+      <!-- Result Section (Reveals after generation) -->
+      <div id="resultSection" class="hidden mt-7 pt-6 border-t border-neutral-200/80 dark:border-neutral-800 fade-enter">
+
+        <!-- Status badge -->
+        <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-apple-green mb-3">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Deep Link Ready
+        </div>
+
+        <!-- Prominent Large Green Button to Trigger Shortcuts -->
+        <a
+          id="triggerShortcutBtn"
+          href="#"
+          class="block w-full text-center bg-apple-green hover:bg-apple-greenDark text-white font-bold text-lg sm:text-xl py-4 px-6 rounded-2xl shadow-ios-btn active:scale-[0.98] hover:shadow-green-500/30 transition-all cursor-pointer relative overflow-hidden group"
+        >
+          <div class="flex items-center justify-center gap-3">
+            <!-- Apple Shortcuts glyph -->
+            <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.7 2.3c.8-.8 2.1-.8 2.9 0l3.7 3.7c.8.8.8 2.1 0 2.9l-3.7 3.7c-.8.8-2.1.8-2.9 0L4 8.9c-.8-.8-.8-2.1 0-2.9l3.7-3.7z" opacity="0.65"/>
+              <path d="M13.4 11.4c.8-.8 2.1-.8 2.9 0l3.7 3.7c.8.8.8 2.1 0 2.9l-3.7 3.7c-.8.8-2.1.8-2.9 0l-3.7-3.7c-.8-.8-.8-2.1 0-2.9l3.7-3.7z"/>
+            </svg>
+            <span class="tracking-tight">Open in Apple Shortcuts</span>
+          </div>
+          <span class="block text-[11px] font-normal text-white/80 mt-0.5">Taps directly into Shortcuts app</span>
+        </a>
+
+        <!-- Secondary Actions (Copy & QR Code) -->
+        <div class="grid grid-cols-2 gap-2.5 mt-3">
+          <!-- Copy Link Button -->
+          <button
+            type="button"
+            id="copyLinkBtn"
+            onclick="copyGeneratedLink()"
+            class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200/80 dark:bg-[#2C2C2E] dark:hover:bg-[#3A3A3C] text-xs font-semibold text-neutral-700 dark:text-neutral-200 transition-colors"
+          >
+            <svg id="copyIcon" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span id="copyBtnText">Copy Link</span>
+          </button>
+
+          <!-- Toggle QR Code -->
+          <button
+            type="button"
+            id="toggleQrBtn"
+            onclick="toggleQrCode()"
+            class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200/80 dark:bg-[#2C2C2E] dark:hover:bg-[#3A3A3C] text-xs font-semibold text-neutral-700 dark:text-neutral-200 transition-colors"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <span id="qrBtnText">Show QR Code</span>
+          </button>
+        </div>
+
+        <!-- QR Code container (helpful when on PC to scan with iPhone) -->
+        <div id="qrContainer" class="hidden mt-4 p-4 rounded-2xl bg-white dark:bg-white flex flex-col items-center justify-center shadow-inner border border-neutral-200 dark:border-neutral-300">
+          <div id="qrcode" class="p-1"></div>
+          <p class="text-[11px] text-neutral-600 mt-2 font-medium">Scan with iPhone Camera to launch shortcut</p>
+        </div>
+
+        <!-- Technical Payload Inspector -->
+        <details class="mt-4 rounded-xl bg-neutral-50 dark:bg-[#242426] border border-neutral-200/60 dark:border-neutral-800 text-xs overflow-hidden group">
+          <summary class="px-3.5 py-2.5 font-medium text-neutral-600 dark:text-neutral-400 cursor-pointer flex items-center justify-between select-none">
+            <span>View Encoded URL &amp; Payload</span>
+            <span class="text-neutral-400 group-open:rotate-180 transition-transform">&#9662;</span>
+          </summary>
+          <div class="px-3.5 pb-3 pt-1 space-y-2 border-t border-neutral-200/40 dark:border-neutral-800">
+            <div>
+              <div class="text-[10px] uppercase font-semibold text-neutral-400 mb-0.5">Raw JSON Object:</div>
+              <pre id="rawJsonPreview" class="p-2 rounded-lg bg-neutral-100 dark:bg-[#1C1C1E] font-mono text-[11px] text-neutral-800 dark:text-neutral-300 overflow-x-auto whitespace-pre-wrap break-all"></pre>
+            </div>
+            <div>
+              <div class="text-[10px] uppercase font-semibold text-neutral-400 mb-0.5">Constructed Deep Link:</div>
+              <p id="fullUrlPreview" class="p-2 rounded-lg bg-neutral-100 dark:bg-[#1C1C1E] font-mono text-[11px] text-apple-blue break-all select-all"></p>
+            </div>
+          </div>
+        </details>
+      </div>
+
+    </div>
+
+    <!-- On-Page Instructions Card -->
+    <section class="mt-6 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-md rounded-2xl p-5 border border-neutral-200/60 dark:border-neutral-800 text-xs sm:text-sm">
+      <div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white mb-2">
+        <svg class="w-4 h-4 text-apple-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        How This 2-Step Flow Works
+      </div>
+
+      <div class="text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4 space-y-2">
+        <p>
+          <strong>Why both an iCloud link and a Deep Link?</strong>
+        </p>
+        <ul class="list-disc pl-4 space-y-1 text-xs">
+          <li><strong>iCloud Shortcut Link (Step 1):</strong> Installs the shortcut logic (actions, share sheet, Telegram API requests) onto the iPhone. Public iCloud links cannot include private user credentials.</li>
+          <li><strong>Deep Link Generator (Step 2):</strong> Passes the user's private Telegram Bot Token and Chat ID safely into the shortcut via <code class="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-neutral-800 dark:text-neutral-200 font-mono text-[11px]">shortcuts://run-shortcut</code>.</li>
+        </ul>
+      </div>
+
+      <!-- Collapsible Shortcut Configuration Details -->
+      <details class="rounded-xl bg-neutral-100/70 dark:bg-[#2C2C2E]/70 p-3 text-xs group">
+        <summary class="font-semibold text-neutral-800 dark:text-neutral-200 cursor-pointer flex items-center justify-between select-none">
+          <span>Shortcut Internal Action Setup (JSON Parsing)</span>
+          <span class="text-neutral-400 group-open:rotate-180 transition-transform">&#9662;</span>
+        </summary>
+        <div class="mt-3 pt-2 border-t border-neutral-200/60 dark:border-neutral-700/60">
+          <p class="text-neutral-600 dark:text-neutral-400 mb-2">
+            Inside the iOS <strong>Shortcuts</strong> app, ensure <code class="bg-white dark:bg-neutral-800 px-1 py-0.5 rounded text-neutral-800 dark:text-neutral-200 font-mono text-[11px]">Photo2Tegram</code> has these actions:
+          </p>
+          <ol class="space-y-2 text-neutral-600 dark:text-neutral-300">
+            <li class="flex items-start gap-2">
+              <span class="flex-shrink-0 w-4 h-4 rounded-full bg-apple-blue/10 text-apple-blue font-bold text-[10px] flex items-center justify-center mt-0.5">1</span>
+              <span>Add action: <strong class="text-neutral-900 dark:text-white">"Receive Text from Share Sheet"</strong> (or enable <em>"Shortcut Input"</em> accepts text).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="flex-shrink-0 w-4 h-4 rounded-full bg-apple-blue/10 text-apple-blue font-bold text-[10px] flex items-center justify-center mt-0.5">2</span>
+              <span>Add action: <strong class="text-neutral-900 dark:text-white">"Get Dictionary from Input"</strong> (converts the passed JSON text into a key-value dictionary).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="flex-shrink-0 w-4 h-4 rounded-full bg-apple-blue/10 text-apple-blue font-bold text-[10px] flex items-center justify-center mt-0.5">3</span>
+              <span>Use <strong class="text-neutral-900 dark:text-white">"Get Value for Value"</strong> with keys <code class="bg-white dark:bg-neutral-800 px-1 py-0.5 rounded text-neutral-800 dark:text-neutral-200 font-mono text-[11px]">botToken</code> and <code class="bg-white dark:bg-neutral-800 px-1 py-0.5 rounded text-neutral-800 dark:text-neutral-200 font-mono text-[11px]">chatID</code>.</span>
+            </li>
+          </ol>
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center text-[11px] text-neutral-400 dark:text-neutral-600">
+    Designed for iOS &bull; Apple Shortcuts Deep Link Protocol
+  </footer>
+
+  <!-- Toast Notification -->
+  <div
+    id="toast"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-neutral-900/90 dark:bg-white/90 text-white dark:text-neutral-900 px-4 py-2 rounded-full text-xs font-medium shadow-xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-1.5"
+  >
+    <svg class="w-3.5 h-3.5 text-apple-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span id="toastMsg">Copied to clipboard</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const DEFAULT_ICLOUD_LINK = 'https://www.icloud.com/shortcuts/ba4e28287e13441790dc2105131cfafb';
+    let currentDeepLink = '';
+    let qrInstance = null;
+    let icloudLink = localStorage.getItem('photo2tegram_icloud_link') || DEFAULT_ICLOUD_LINK;
+
+    // Initialize iCloud Link state
+    function initICloudLink() {
+      const btn = document.getElementById('icloudInstallBtn');
+      const input = document.getElementById('icloudUrlInput');
+      const subtitle = document.getElementById('icloudStatusSubtitle');
+
+      if (icloudLink) {
+        btn.href = icloudLink;
+        if (input) input.value = icloudLink;
+        if (subtitle) {
+          subtitle.textContent = 'Tap to install on iPhone • Ready';
+          subtitle.className = 'block text-[11px] font-normal text-apple-green dark:text-[#30D158]';
+        }
+      } else {
+        btn.href = DEFAULT_ICLOUD_LINK;
+        if (subtitle) {
+          subtitle.textContent = 'Tap to install on iPhone • Ready';
+          subtitle.className = 'block text-[11px] font-normal text-apple-green dark:text-[#30D158]';
+        }
+      }
+    }
+
+    function handleICloudClick(event) {
+      if (!icloudLink) {
+        icloudLink = DEFAULT_ICLOUD_LINK;
+      }
+    }
+
+    function promptICloudLink() {
+      const current = icloudLink || DEFAULT_ICLOUD_LINK;
+      const input = prompt('Paste your Photo2Tegram iCloud Shortcut Share Link:\n(From iOS Shortcuts app: Share > Copy iCloud Link)', current);
+      if (input !== null && input.trim() !== '') {
+        updateICloudLinkFromInput(input.trim());
+        showToast('iCloud link saved!');
+      }
+    }
+
+    function updateICloudLinkFromInput(url) {
+      icloudLink = url.trim();
+      if (icloudLink) {
+        localStorage.setItem('photo2tegram_icloud_link', icloudLink);
+      } else {
+        localStorage.removeItem('photo2tegram_icloud_link');
+      }
+      initICloudLink();
+    }
+
+    // Call on load
+    document.addEventListener('DOMContentLoaded', initICloudLink);
+
+    /**
+     * Intercept form submission, build JSON, URL-encode, and construct Shortcuts deep link.
+     */
+    function generateShortcutLink(event) {
+      if (event) event.preventDefault();
+
+      const botTokenInput = document.getElementById('botToken');
+      const chatIDInput = document.getElementById('chatID');
+      const shortcutNameInput = document.getElementById('shortcutName');
+
+      const botToken = botTokenInput.value.trim();
+      const chatID = chatIDInput.value.trim();
+      const shortcutName = (shortcutNameInput.value.trim() || 'Photo2Tegram');
+
+      if (!botToken || !chatID) {
+        showToast('Please fill in both Bot Token and Chat ID.');
+        return;
+      }
+
+      // 1. Build JSON Object: {"botToken": "value1", "chatID": "value2"}
+      const payloadObj = {
+        botToken: botToken,
+        chatID: chatID
+      };
+
+      const jsonString = JSON.stringify(payloadObj);
+
+      // 2. URL-encode this JSON string
+      const urlEncodedJson = encodeURIComponent(jsonString);
+
+      // 3. Construct deep link:
+      // shortcuts://run-shortcut?name=Photo2Tegram&input=text&text=[URL_ENCODED_JSON]
+      const deepLink = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}&input=text&text=${urlEncodedJson}`;
+      currentDeepLink = deepLink;
+
+      // 4. Update Prominent Green Button
+      const triggerBtn = document.getElementById('triggerShortcutBtn');
+      triggerBtn.href = deepLink;
+
+      // Update Payload Inspector Details
+      document.getElementById('rawJsonPreview').textContent = JSON.stringify(payloadObj, null, 2);
+      document.getElementById('fullUrlPreview').textContent = deepLink;
+
+      // 5. Reveal Result Section
+      const resultSection = document.getElementById('resultSection');
+      resultSection.classList.remove('hidden');
+
+      // Re-render QR code if it was visible
+      const qrContainer = document.getElementById('qrContainer');
+      if (!qrContainer.classList.contains('hidden')) {
+        renderQrCode(deepLink);
+      }
+
+      // Smooth scroll to green button on mobile
+      triggerBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showToast('Shortcuts link generated!');
+    }
+
+    /**
+     * Copy the generated link to clipboard with animated feedback
+     */
+    async function copyGeneratedLink() {
+      if (!currentDeepLink) return;
+
+      try {
+        await navigator.clipboard.writeText(currentDeepLink);
+        const copyBtnText = document.getElementById('copyBtnText');
+        const originalText = copyBtnText.textContent;
+        copyBtnText.textContent = 'Copied!';
+        showToast('Shortcut link copied to clipboard!');
+        setTimeout(() => {
+          copyBtnText.textContent = originalText;
+        }, 2000);
+      } catch (err) {
+        // Fallback for non-HTTPS or unsupported contexts
+        const textarea = document.createElement('textarea');
+        textarea.value = currentDeepLink;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('Copied to clipboard!');
+      }
+    }
+
+    /**
+     * Helper to paste clipboard content directly into an input field
+     */
+    async function pasteToInput(inputId) {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const input = document.getElementById(inputId);
+          input.value = text.trim();
+          input.focus();
+          showToast('Pasted from clipboard');
+        }
+      } catch (err) {
+        showToast('Clipboard access denied. Please paste manually.');
+      }
+    }
+
+    /**
+     * Toggle options section (target shortcut name)
+     */
+    function toggleOptions() {
+      const container = document.getElementById('optionsContainer');
+      const icon = document.getElementById('optionsIcon');
+      const isHidden = container.classList.contains('hidden');
+
+      if (isHidden) {
+        container.classList.remove('hidden');
+        icon.classList.add('rotate-90');
+      } else {
+        container.classList.add('hidden');
+        icon.classList.remove('rotate-90');
+      }
+    }
+
+    /**
+     * Toggle QR code display
+     */
+    function toggleQrCode() {
+      const qrContainer = document.getElementById('qrContainer');
+      const qrBtnText = document.getElementById('qrBtnText');
+
+      if (qrContainer.classList.contains('hidden')) {
+        qrContainer.classList.remove('hidden');
+        qrBtnText.textContent = 'Hide QR Code';
+        renderQrCode(currentDeepLink);
+      } else {
+        qrContainer.classList.add('hidden');
+        qrBtnText.textContent = 'Show QR Code';
+      }
+    }
+
+    /**
+     * Render QR code in the container
+     */
+    function renderQrCode(text) {
+      if (!text || typeof QRCode === 'undefined') return;
+      const qrElement = document.getElementById('qrcode');
+      qrElement.innerHTML = '';
+      qrInstance = new QRCode(qrElement, {
+        text: text,
+        width: 180,
+        height: 180,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    /**
+     * Display a floating iOS-style toast notification
+     */
+    let toastTimeout = null;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
